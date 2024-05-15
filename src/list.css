@@ -52,3 +52,17 @@
         content: attr(data-title); 
     }
 }
+
+/* CSS to disable table responsiveness on laptop and larger screens */
+@media (min-width: 992px) {
+    .table-responsive-lg {
+      overflow-x: visible;
+      -webkit-overflow-scrolling: touch;
+    }
+    .table-responsive-lg > .table {
+      width: auto;
+    }
+  }
+  .act-width{
+    width:50px
+  }

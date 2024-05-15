@@ -11,3 +11,16 @@ body {
 .mx-t3{
   margin-top: -3rem;
 }
+input{
+  color: transparent;
+}
+.transparent-input {
+  background-color: transparent;
+}
+.icon-rel{
+  position: relative;
+}
+.icon-abs{
+  position: absolute;
+  margin-right: 40px;
+}

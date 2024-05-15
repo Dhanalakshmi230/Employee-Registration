@@ -1,18 +1,20 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { submitForm } from './action';
-import { useNavigate } from 'react-router-dom';
+import { updateEntry } from './action';
+import { useParams, useNavigate } from 'react-router-dom';
+import Loader from './loader'; // Import your loader component
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-// import "./form.css"
-function Form({ submitForm }) {
+function Updateform({ updateEntry }) {
+    const { id } = useParams();
   const navigate = useNavigate();
-    const [Gender, setGender] = useState('male');
-  const [Country, setCountry] = useState('India');
+  const [Gender, setGender] = useState('');
+  const [Country, setCountry] = useState('');
+  const [loading, setLoading] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [formData, setFormData] = useState({
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);// State for loading indicator
+    const [updatedata, setUpdatedata] = useState({
+        id: id, // Ensure that the ID is initially set
         Firstname: '',
         Lastname: '',
         Email: '',
@@ -26,111 +28,123 @@ function Form({ submitForm }) {
         Phone: '',
         Password: '',
         ConfirmPassword: ''
-      });
-    
-      // Function to handle changes in form input fields
-      const handleChange = (e) => {
-        setFormData({
-          ...formData,
-          [e.target.name]: e.target.value
-        });
-      };
-      const handleGenderChange = (event) => {
-        const selectedGender = event.target.value;
-        setFormData({
-            ...formData,
-            Gender: selectedGender
-        });
-        setGender(selectedGender); // Update the gender state as well if needed
-    };
-    const handleCountryChange = (event) => {
-        const selectedCountry = event.target.value;
-        setFormData({
-            ...formData,
-            Country: selectedCountry
-        });
-        setCountry(selectedCountry); // Update the gender state as well if needed
-    };
-      // Function to handle form submission
-      const handleSubmit = (e) => {
-        e.preventDefault();
-      
-        // Check if Password and Confirm Password match
-        if (formData.Password !== formData.ConfirmPassword) {
-          alert("Password and Confirm Password do not match");
-          return; // Stop form submission
+    });
+
+    useEffect(() => {
+        // Fetch data for the specified ID when the component mounts
+        fetchData();
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`https://63cfb761e52f587829a384e5.mockapi.io/Form/${id}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch data');
+            }
+            const data = await response.json();
+            setUpdatedata(data);
+            setLoading(false); // Turn off loading indicator once data is fetched
+        } catch (error) {
+            console.error('Error fetching data:', error);
         }
-      
-        // Dispatch action to submit form data to Redux store
-        submitForm(formData);
-      
-        // Make API call to submit form data to the server
-        fetch('https://63cfb761e52f587829a384e5.mockapi.io/Form', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(formData)
+    };
+  
+    const handleGenderChange = (event) => {
+      const selectedGender = event.target.value;
+      setUpdatedata({
+          ...updatedata,
+          Gender: selectedGender
+      });
+      setGender(selectedGender); // Update the gender state as well if needed
+  };
+  const handleCountryChange = (event) => {
+      const selectedCountry = event.target.value;
+      setUpdatedata({
+          ...updatedata,
+          Country: selectedCountry
+      });
+      setCountry(selectedCountry); // Update the gender state as well if needed
+  };
+    const handleChange = (e) => {
+        setUpdatedata({
+            ...updatedata,
+            [e.target.name]: e.target.value
+        });
+    };
+    const togglePasswordVisibility = () => {
+      setShowPassword(!showPassword);
+    };
+  
+    const toggleConfirmPasswordVisibility = () => {
+      setShowConfirmPassword(!showConfirmPassword);
+    };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        updateEntry(updatedata);
+
+        const updatedFormData = { ...updatedata };
+
+        fetch(`https://63cfb761e52f587829a384e5.mockapi.io/Form/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedFormData)
         })
         .then(response => response.json())
         .then(data => {
-          // Handle API response
-          console.log(data);
-          // Navigate to the list page
-          navigate('/list'); // Assuming your list page route is '/list'
+            console.log(data);
+            // Navigate to another page after successful update
+            navigate('/list');
         })
         .catch(error => {
-          // Handle errors
-          console.error('Error:', error);
+            console.error('Error:', error);
         });
-      };
-      const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-      };
+    };
+
+    if (loading) {
+        return <Loader />; // Render loader while data is being fetched
+    }
     
-      const toggleConfirmPasswordVisibility = () => {
-        setShowConfirmPassword(!showConfirmPassword);
-      };
-  
-      
   return (
     <div className="container mt-3">
       <form onSubmit={handleSubmit}>
       <div class="row jumbotron box8">
         <div class="col-sm-12 mx-t3 mb-4">
-          <h2 class="text-center text-info">Employee Register </h2>
+          <h2 class="text-center text-info">Employee Update</h2>
         </div>
         <div class="col-sm-6 form-group">
           <label for="name-f">First Name</label>
-          <input type="text" class="form-control" name="Firstname"  placeholder="Enter your first name."  value={formData.Firstname} onChange={handleChange} required />
+          <input type="text" class="form-control" name="Firstname" id="name-f" placeholder="Enter your first name."  value={updatedata.Firstname} onChange={handleChange} required />
         </div>
         <div class="col-sm-6 form-group">
           <label for="name-l">Last name</label>
-                      <input type="text" class="form-control" name="Lastname" id="name-l" placeholder="Enter your last name." value={formData.Lastname} onChange={handleChange} required />
+                      <input type="text" class="form-control" name="Lastname" id="name-l" placeholder="Enter your last name." value={updatedata.Lastname} onChange={handleChange} required />
         </div>
         <div class="col-sm-6 form-group">
           <label for="email">Email</label>
-          <input type="email" class="form-control" name="Email" id="email" placeholder="Enter your email." value={formData.Email} onChange={handleChange} required />
+          <input type="email" class="form-control" name="Email" id="email" placeholder="Enter your email." value={updatedata.Email} onChange={handleChange} required />
         </div>
         <div class="col-sm-6 form-group">
           <label for="address-1">Address Line-1</label>
-          <input type="address" class="form-control" name="Address1" id="address-1" placeholder="Locality/House/Street no." value={formData.Address1} onChange={handleChange} required />
+          <input type="address" class="form-control" name="Address1" id="address-1" placeholder="Locality/House/Street no." value={updatedata.Address1} onChange={handleChange} required />
         </div>
         <div class="col-sm-6 form-group">
           <label for="address-2">Address Line-2</label>
-          <input type="address" class="form-control" name="Address2" id="address-2" placeholder="Village/City Name." value={formData.Address2} onChange={handleChange} required />
+          <input type="address" class="form-control" name="Address2" id="address-2" placeholder="Village/City Name." value={updatedata.Address2} onChange={handleChange} required />
         </div>
         <div class="col-sm-4 form-group">
           <label for="State">State</label>
-          <input type="address" class="form-control" name="State" id="State" placeholder="Enter your state name." value={formData.State} onChange={handleChange} required />
+          <input type="address" class="form-control" name="State" id="State" placeholder="Enter your state name." value={updatedata.State} onChange={handleChange} required />
         </div>
         <div class="col-sm-2 form-group">
           <label for="zip">Postal-Code</label>
-          <input type="zip" class="form-control" name="Zip" id="zip" placeholder="Postal-Code." value={formData.Zip} onChange={handleChange} required />
+          <input type="zip" class="form-control" name="Zip" id="zip" placeholder="Postal-Code." value={updatedata.Zip} onChange={handleChange} required />
         </div>
         <div class="col-sm-6 form-group">
           <label for="Country">Country</label>
-          <select class="form-control custom-select browser-default" value={formData.Country} onChange={handleCountryChange}>
+          <select class="form-control custom-select browser-default" value={updatedata.Country} onChange={handleCountryChange}>
             <option value="Afghanistan">Afghanistan</option>
             <option value="Åland Islands">Åland Islands</option>
             <option value="Albania">Albania</option>
@@ -379,11 +393,11 @@ function Form({ submitForm }) {
         </div>
         <div class="col-sm-6 form-group">
           <label for="Date">Date Of Birth</label>
-          <input type="Date" name="Dob" class="form-control" id="Date" placeholder="" value={formData.Dob} onChange={handleChange} required />
+          <input type="Date" name="Dob" class="form-control" id="Date" placeholder="" value={updatedata.Dob} onChange={handleChange} required />
         </div>
         <div class="col-sm-6 form-group">
           <label for="sex">Gender</label>
-          <select id="sex" class="form-control browser-default custom-select" value={formData.Gender} onChange={handleGenderChange}>
+          <select id="sex" class="form-control browser-default custom-select" value={updatedata.Gender} onChange={handleGenderChange}>
             <option value="male">Male</option>
             <option value="female">Female</option>
             <option value="unspesified">Unspecified</option>
@@ -392,12 +406,13 @@ function Form({ submitForm }) {
        
         <div class="col-sm-6 form-group">
           <label for="tel">Phone</label>
-          <input type="tel" name="Phone" class="form-control" id="tel" placeholder="Enter Your Contact Number." value={formData.Phone} onChange={handleChange} required />
+          <input type="tel" name="Phone" class="form-control" id="tel" placeholder="Enter Your Contact Number." value={updatedata.Phone} onChange={handleChange} required />
         </div>
+        
         <div className="col-sm-6 form-group">
   <label htmlFor="pass">Password</label>
   <div className="input-group">
-    <input type={showPassword ? "text" : "password"} name="Password" className="form-control" id="pass" placeholder="Enter your password." value={formData.Password} onChange={handleChange} required />
+    <input type={showPassword ? "text" : "password"} name="Password" className="form-control" id="pass" placeholder="Enter your password." value={updatedata.Password} onChange={handleChange} required />
     <div className="input-group-append">
       <p className="btn btn-secondary"  >
         <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} onClick={togglePasswordVisibility} />
@@ -409,7 +424,7 @@ function Form({ submitForm }) {
 <div className="col-sm-6 form-group">
   <label htmlFor="pass2">Confirm Password</label>
   <div className="input-group">
-    <input type={showConfirmPassword ? "text" : "password"} name="ConfirmPassword" className="form-control" id="pass2" placeholder="Re-enter your password." value={formData.ConfirmPassword} onChange={handleChange} required />
+    <input type={showConfirmPassword ? "text" : "password"} name="ConfirmPassword" className="form-control" id="pass2" placeholder="Re-enter your password."value={updatedata.ConfirmPassword} onChange={handleChange} required />
     <div className="input-group-append">
       
        
@@ -419,13 +434,12 @@ function Form({ submitForm }) {
     </div>
   </div>
 </div>
-
         <div class="col-sm-12">
          
         </div>
   
         <div class="col-sm-12 form-group mb-0">
-          <button class="btn btn-primary float-right">Submit</button>
+          <button class="btn btn-primary float-right">Update</button>
         </div>
   
       </div>
@@ -434,4 +448,4 @@ function Form({ submitForm }) {
   );
 }
 
-export default connect(null, { submitForm })(Form);
+export default connect(null, { updateEntry })(Updateform);
