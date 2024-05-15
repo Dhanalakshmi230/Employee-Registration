@@ -23,8 +23,8 @@ export default function Navbar() {
 
       {/* Navigation links */}
       <div className={`links ${menuOpen ? "open" : ""}`}>
-        <Link to="/form" onClick={() => setMenuOpen(false)}><b>Form</b></Link>
-        <Link to="/list" onClick={() => setMenuOpen(false)}><b>List</b></Link>
+        <Link to="/form" onClick={() => setMenuOpen(false)}><b>Employee Form</b></Link>
+        <Link to="/list" onClick={() => setMenuOpen(false)}><b>Employee List</b></Link>
        
       </div>
     </div>
