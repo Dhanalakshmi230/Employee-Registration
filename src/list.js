@@ -8,22 +8,27 @@ import { useNavigate } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Loader from './loader'; // Import your loader component here
+import Card from 'react-bootstrap/Card';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "./list.css";
 
-// Define the base API URL
 const apiUrl = 'https://63cfb761e52f587829a384e5.mockapi.io';
 
 function List({ tableData, setTableData, updateEntry, deleteEntry }) {
   const navigate = useNavigate();
-  const [deleteItemId, setDeleteItemId] = useState(null); // State variable to store the id of the item to be deleted
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); 
-  const [loading, setLoading] = useState(true); // State variable to manage loading state
+  const [deleteItemId, setDeleteItemId] = useState(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await axios.get(`${apiUrl}/Form`);
         setTableData(result.data);
-        setLoading(false); // Data fetching completed, set loading to false
+        setFilteredData(result.data);
+        setLoading(false);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -33,101 +38,129 @@ function List({ tableData, setTableData, updateEntry, deleteEntry }) {
   }, [setTableData]);
 
   const handleDelete = async (id) => {
+    setLoading(true); // Start loading
     try {
       await axios.delete(`${apiUrl}/Form/${id}`);
-      // Dispatch the delete action after successful deletion
       deleteEntry(id);
       setShowDeleteConfirmation(false);
+      setFilteredData(filteredData.filter(item => item.id !== id)); // Update filtered data
+      setLoading(false); // Stop loading after operation
     } catch (error) {
       console.error('Failed to delete data:', error);
+      setLoading(false); // Ensure loading stops on error
+    }
+};
+
+
+  const handleEdit = (id) => {
+    navigate(`/updateform/${id}`);
+  };
+
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    if (query) {
+      setFilteredData(tableData.filter(item =>
+        Object.values(item).some(val =>
+          String(val).toLowerCase().includes(query)
+        )
+      ));
+    } else {
+      setFilteredData(tableData);
     }
   };
 
-  const handleEdit = async (id) => {
-    try {
-      const result = await axios.get(`${apiUrl}/Form/${id}`);
-      updateEntry(result.data);
-      // Navigate to the updateform page with the fetched data and id
-      navigate(`/updateform/${id}`);
-    } catch (error) {
-      console.error('Failed to fetch data for editing:', error);
-    }
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setFilteredData(tableData);
   };
 
   if (loading) {
-    return <Loader />; // Render loader while data is being fetched
+    return (
+      <div className="loader-container">
+        <Loader />
+      </div>
+    );
   }
+  
 
   return (
-    <div className="mt-4">
+    <div className="container mt-4">
       <Modal show={showDeleteConfirmation} onHide={() => setShowDeleteConfirmation(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Delete Confirmation</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <p>Are you sure you want to delete this item?</p>
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to delete this item?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDeleteConfirmation(false)}>Cancel</Button>
           <Button variant="primary" onClick={() => handleDelete(deleteItemId)}>Yes</Button>
         </Modal.Footer>
       </Modal>
-      <div className="row justify-content-center">
-        <div className="col-lg-12 col-md-10 col-sm-12">
-          <div className={`table-responsive ${window.innerWidth >= 992 ? '' : 'table-responsive-lg'}`}>
-            <table className="table table-light table-striped">
-              <thead className="cf">
-                <tr>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Email</th>
-                  <th>Address Line1</th>
-                  <th>Address Line2</th>
-                  <th>State</th>
-                  <th>Country</th>
-                  <th>Pin</th>
-                  <th>Date Of Birth</th>
-                  <th>Gender</th>
-                  <th>Phone Number</th>
-                  <th>Password</th>
-                  <th>Confirm Password</th>
-                  <th className='act-width'>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tableData.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.Firstname}</td>
-                    <td>{item.Lastname}</td>
-                    <td>{item.Email}</td>
-                    <td>{item.Address1}</td>
-                    <td>{item.Address2}</td>
-                    <td>{item.State}</td>
-                    <td>{item.Country}</td>
-                    <td>{item.Zip}</td>
-                    <td>{item.Dob}</td>
-                    <td>{item.Gender}</td>
-                    <td>{item.Phone}</td>
-                    <td>{item.Password}</td>
-                    <td>{item.ConfirmPassword}</td>
-                    <td className='d-flex'>
-                      <button className="btn btn-danger fs-5" onClick={() => {
-                        // Set the id of the item to be deleted and show the confirmation popup
-                        setDeleteItemId(item.id);
-                        setShowDeleteConfirmation(true);
-                      }}>
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
-                      <button className="btn btn-primary fs-5" onClick={() => handleEdit(item.id)}> {/* Pass the id to handleEdit */}
-                        <FontAwesomeIcon icon={faEdit} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+
+      <div className="table-responsive shadow-lg p-3 mb-5 bg-body rounded">
+        <div className="search-bar mb-3">
+          <h5 className="nowrap">Employee Details</h5>
+          <div className="input-group col-3">
+            <input
+              type="text"
+              className="form-control search-input w-25"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={handleSearch}
+            />
+            <Button variant="secondary" onClick={handleClearSearch} className="ms-2">Clear</Button>
           </div>
         </div>
+        <table className="table table-light table-striped">
+          <thead>
+            <tr>
+              <th className="nowrap">First Name</th>
+              <th className="nowrap">Last Name</th>
+              <th className="nowrap">Email</th>
+              <th className="nowrap">Address Line1</th>
+              <th className="nowrap">Address Line2</th>
+              <th className="nowrap">State</th>
+              <th className="nowrap">Country</th>
+              <th className="nowrap">Pin</th>
+              <th className="nowrap">Date Of Birth</th>
+              <th className="nowrap">Gender</th>
+              <th className="nowrap">Phone Number</th>
+              <th className="nowrap">Password</th>
+              <th className="nowrap">Confirm Password</th>
+              <th className="nowrap">Action</th>
+            </tr>
+          </thead>
+          <tbody className="font-tab">
+            {filteredData.map(item => (
+              <tr key={item.id}>
+                <td>{item.Firstname}</td>
+                <td>{item.Lastname}</td>
+                <td>{item.Email}</td>
+                <td>{item.Address1}</td>
+                <td>{item.Address2}</td>
+                <td>{item.State}</td>
+                <td>{item.Country}</td>
+                <td>{item.Zip}</td>
+                <td>{item.Dob}</td>
+                <td>{item.Gender}</td>
+                <td>{item.Phone}</td>
+                <td>{item.Password}</td>
+                <td>{item.ConfirmPassword}</td>
+                <td className="d-flex justify-space-between">
+                  <button className="btn btn-danger fsedit me-3" onClick={() => {
+                    setDeleteItemId(item.id);
+                    setShowDeleteConfirmation(true);
+                  }}>
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
+                  <button className="btn btn-primary fsedit" onClick={() => handleEdit(item.id)}>
+                    <FontAwesomeIcon icon={faEdit} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
@@ -139,7 +172,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   setTableData,
-  updateEntry, // Make sure updateEntry is included here
+  updateEntry,
   deleteEntry
 };
 

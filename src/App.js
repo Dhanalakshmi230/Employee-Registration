@@ -12,8 +12,8 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-      <Route path="/" element={<Home />} />
-        <Route path="/form" element={<Form />} />
+      {/* <Route path="/" element={<Home />} /> */}
+        <Route path="/" element={<Form />} />
         <Route path="/list" element={<List />} />
         <Route path="/updateform/:id" element={<Updateform />} />
 

@@ -1,68 +1,26 @@
-/* CSS for responsive table */
-@media only screen and (max-width: 800px) {
-    /* Force table to not be like tables anymore */
-    #no-more-tables table, 
-    #no-more-tables thead, 
-    #no-more-tables tbody, 
-    #no-more-tables th, 
-    #no-more-tables td, 
-    #no-more-tables tr { 
-        display: block; 
-    }
- 
-    /* Hide table headers (but not display: none;, for accessibility) */
-    #no-more-tables thead tr { 
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-    }
- 
-    #no-more-tables tr { 
-        border: 1px solid #ccc; 
-    }
- 
-    #no-more-tables td { 
-        /* Behave like a "row" */
-        border: none;
-        border-bottom: 1px solid #eee; 
-        position: relative;
-        padding-left: 50%; 
-        white-space: normal;
-        text-align: left;
-        padding: 10px; /* Add padding to the table cells */
-    }
- 
-    #no-more-tables td:before { 
-        /* Now like a table header */
-        position: absolute;
-        /* Top/left values mimic padding */
-        top: 6px;
-        left: 6px;
-        width: 45%; 
-        padding-right: 10px; 
-        white-space: nowrap;
-        text-align: left;
-        font-weight: bold;
-    }
- 
-    /*
-    Label the data
-    */
-    #no-more-tables td:before { 
-        content: attr(data-title); 
-    }
-}
-
-/* CSS to disable table responsiveness on laptop and larger screens */
-@media (min-width: 992px) {
-    .table-responsive-lg {
-      overflow-x: visible;
-      -webkit-overflow-scrolling: touch;
-    }
-    .table-responsive-lg > .table {
-      width: auto;
-    }
+.nowrap {
+    white-space: nowrap;
   }
-  .act-width{
-    width:50px
+  
+  .search-input {
+    width: 250px;
   }
+  
+  .search-bar .nowrap {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .loader-container {
+    position: fixed; /* or 'absolute' if the parent container has position 'relative' */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.5); /* Optional: white background with opacity */
+    z-index: 1050; /* Make sure it's on top of other content */
+  }
+  

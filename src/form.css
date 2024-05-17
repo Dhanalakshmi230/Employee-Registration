@@ -4,6 +4,7 @@ label {
 }
 body {
   background: #f1f1f1;
+  font-family: serif;
 }
 .box8{
   box-shadow: 0px 0px 5px 1px #999;
@@ -23,4 +24,17 @@ input{
 .icon-abs{
   position: absolute;
   margin-right: 40px;
+}
+
+.loader-container {
+  position: fixed; /* or 'absolute' if the parent container has position 'relative' */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.5); /* Optional: white background with opacity */
+  z-index: 1050; /* Make sure it's on top of other content */
 }

@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Loader from './loader'; // Import your loader component
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import "./form.css"
 function Updateform({ updateEntry }) {
     const { id } = useParams();
   const navigate = useNavigate();
@@ -104,8 +105,13 @@ function Updateform({ updateEntry }) {
     };
 
     if (loading) {
-        return <Loader />; // Render loader while data is being fetched
+      return (
+        <div className="loader-container">
+          <Loader />
+        </div>
+      );
     }
+    
     
   return (
     <div className="container mt-3">
