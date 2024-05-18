@@ -99,7 +99,7 @@ function List({ tableData, setTableData, updateEntry, deleteEntry }) {
 
       <div className="table-responsive shadow-lg p-3 mb-5 bg-body rounded">
         <div className="search-bar mb-3">
-          <h5 className="nowrap">Employee Details</h5>
+          <h5 className="nowrap">View Employee</h5>
           <div className="input-group col-3">
             <input
               type="text"

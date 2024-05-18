@@ -1,9 +1,9 @@
-label {
+/* label {
     font-weight: 600;
-    color: #666;
+    color: #111111;
 }
 body {
-  background: #f1f1f1;
+  background: #f1eaea;
   font-family: serif;
 }
 .box8{
@@ -24,10 +24,10 @@ input{
 .icon-abs{
   position: absolute;
   margin-right: 40px;
-}
+}*/
 
-.loader-container {
-  position: fixed; /* or 'absolute' if the parent container has position 'relative' */
+/* .loader-container {
+  position: fixed; 
   top: 0;
   left: 0;
   width: 100%;
@@ -35,6 +35,21 @@ input{
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.5); /* Optional: white background with opacity */
-  z-index: 1050; /* Make sure it's on top of other content */
+  background-color: white; 
+  z-index: 1050; 
+}  */
+.jumbotron {
+  padding: 2rem 1rem;
+  margin-bottom: 2rem;
+  background-color: white;
+  border-radius: .3rem;
+  border: gray;
+}
+.error-font{
+  font-size: 12px;
+}
+
+.custom-placeholder::placeholder {
+  font-size: 12px; /* Adjust the size as needed */
+  color: #2a2828; /* Optional: Adjust the color if needed */
 }

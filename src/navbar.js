@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import "./navbar.css";
-import Logo from "../src/assets/employeesimg.png"
+import Logo from "../src/assets/employeesimg.png";
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -10,10 +11,11 @@ export default function Navbar() {
   };
 
   return (
-    <div className="navbar">
-      {/* Image placed here */}
-      <img src={Logo} alt="Logo" className="logo" />
-
+    <div className="navbar shadow p-3 mb-3 bg-body rounded">
+    <div className="navbar-logo-title">
+        <img src={Logo} alt="Logo" className="logo" />
+        <h4><b>Employee Management Portal</b></h4>
+      </div>
       {/* Mobile menu toggle button */}
       <div className="menu-toggle" onClick={toggleMenu}>
         <div className="menu-icon"></div>
@@ -23,10 +25,21 @@ export default function Navbar() {
 
       {/* Navigation links */}
       <div className={`links ${menuOpen ? "open" : ""}`}>
-      <Link to="/" onClick={() => setMenuOpen(false)}><b>Home</b></Link>
-        <Link to="/form" onClick={() => setMenuOpen(false)}><b>Employee Form</b></Link>
-        <Link to="/list" onClick={() => setMenuOpen(false)}><b>Employee List</b></Link>
-       
+        <NavLink 
+          to="/" 
+          exact 
+          activeClassName="active" 
+          onClick={() => setMenuOpen(false)}
+        >
+          <b>Create Employee</b>
+        </NavLink>
+        <NavLink 
+          to="/list" 
+          activeClassName="active" 
+          onClick={() => setMenuOpen(false)}
+        >
+          <b>View Employee</b>
+        </NavLink>
       </div>
     </div>
   );
