@@ -51,7 +51,7 @@ function Updateform({ updateEntry }) {
         State: '',
         Zip: '',
         Country: '',
-        Dob: '',
+        DateOfBith: '',
         Gender: '',
         Phone: '',
         Password: '',
@@ -77,22 +77,23 @@ function Updateform({ updateEntry }) {
         }
     };
   
-    const handleGenderChange = (event) => {
-      const selectedGender = event.target.value;
-      setUpdatedata({
-          ...updatedata,
-          Gender: selectedGender
-      });
-      setGender(selectedGender); // Update the gender state as well if needed
-  };
-  const handleCountryChange = (event) => {
-      const selectedCountry = event.target.value;
-      setUpdatedata({
-          ...updatedata,
-          Country: selectedCountry
-      });
-      setCountry(selectedCountry); // Update the gender state as well if needed
-  };
+    const handleGenderChange = (e) => {
+      const value = e.target.value;
+      setUpdatedata({ ...updatedata, Gender: value });
+  
+      if (value) {
+        setErrors((prevErrors) => ({ ...prevErrors, Gender: '' }));
+      }
+    };
+  
+    const handleCountryChange = (e) => {
+      const value = e.target.value;
+      setUpdatedata({ ...updatedata, Country: value });
+  
+      if (value) {
+        setErrors((prevErrors) => ({ ...prevErrors, Country: '' }));
+      }
+    };
   
     const togglePasswordVisibility = () => {
       setShowPassword(!showPassword);
@@ -102,9 +103,10 @@ function Updateform({ updateEntry }) {
       setShowConfirmPassword(!showConfirmPassword);
     };
   const handleSubmit = (e) => {
+    const newErrors = {};
     e.preventDefault();
     
-    const requiredFields = ['Firstname', 'Lastname', 'Email', 'Address1', 'Address2', 'State', 'Zip', 'Country', 'Dob', 'Gender', 'Phone', 'Password', 'ConfirmPassword'];
+    const requiredFields = ['Firstname', 'Lastname', 'Email', 'Address1', 'Address2', 'State', 'Zip', 'Country', 'DateOfBith', 'Gender', 'Phone', 'Password', 'ConfirmPassword'];
     const emptyFieldErrors = {};
     
     requiredFields.forEach((field) => {
@@ -122,7 +124,13 @@ function Updateform({ updateEntry }) {
       setErrors({ ...errors, Password: 'Passwords do not match', ConfirmPassword: 'Passwords do not match' });
       return;
     }
+    if (!updatedata.Gender) {
+      newErrors.Gender = 'Please select a gender.';
+    }
 
+    if (!updatedata.Country) {
+      newErrors.Country = 'Please select a country.';
+    }
     updateEntry(updatedata);
         e.preventDefault();
 
@@ -141,7 +149,7 @@ function Updateform({ updateEntry }) {
         .then(data => {
             console.log(data);
             // Navigate to another page after successful update
-            navigate('/list');
+            navigate('/Employee/View');
         })
         .catch(error => {
             console.error('Error:', error);
@@ -160,188 +168,199 @@ function Updateform({ updateEntry }) {
   return (
     <div className="container mt-3 bg-light">
       <form onSubmit={handleSubmit}>
-        <div className="row jumbotron box8 border border-secondary shadow">
-          <div className="col-sm-12 mx-t3 mb-4">
-            <h2 className=" text-dark">Create Employee</h2>
-          </div>
-          <div className="col-sm-4 form-group">
-            <label htmlFor="name-f">First Name</label>
-            <input
-              type="text"
-              className="form-control"
-              name="Firstname"
-              placeholder="Enter your first name."
-              value={updatedata.Firstname}
-              onChange={handleChange}
-            />
-            {errors.Firstname && <p className="text-danger">{errors.Firstname}</p>}
-          </div>
-          <div className="col-sm-4 form-group">
-            <label htmlFor="name-l">Last Name</label>
-            <input
-              type="text"
-              className="form-control"
-              name="Lastname"
-              placeholder="Enter your last name."
-              value={updatedata.Lastname}
-              onChange={handleChange}
-            />
-            {errors.Lastname && <p className="text-danger">{errors.Lastname}</p>}
-          </div>
-          <div className="col-sm-4 form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              className="form-control"
-              name="Email"
-              placeholder="Enter your email."
-              value={updatedata.Email}
-              onChange={handleChange}
-            />
-            {errors.Email && <p className="text-danger">{errors.Email}</p>}
-          </div>
-          <div className="col-sm-4 form-group">
-            <label htmlFor="address-1">Address Line-1</label>
-            <input
-              type="text"
-              className="form-control"
-              name="Address1"
-              id="address-1"
-              placeholder="Locality/House/Street no."
-              value={updatedata.Address1}
-              onChange={handleChange}
-            />
-            {errors.Address1 && <p className="text-danger">{errors.Address1}</p>}
-          </div>
-          <div className="col-sm-4 form-group">
-            <label htmlFor="address-2">Address Line-2</label>
-            <input
-              type="text"
-              className="form-control"
-              name="Address2"
-              id="address-2"
-              placeholder="Village/City Name."
-              value={updatedata.Address2}
-              onChange={handleChange}
-            />
-            {errors.Address2 && <p className="text-danger">{errors.Address2}</p>}
-          </div>
-          <div className="col-sm-4 form-group">
-            <label htmlFor="State">State</label>
-            <input
-              type="text"
-              className="form-control"
-              name="State"
-              id="State"
-              placeholder="Enter your state name."
-              value={updatedata.State}
-              onChange={handleChange}
-            />
-            {errors.State && <p className="text-danger">{errors.State}</p>}
-          </div>
-          <div className="col-sm-3 form-group">
-            <label htmlFor="zip">Postal-Code</label>
-            <input
-              type="text"
-              className="form-control"
-              name="Zip"
-              id="zip"
-              placeholder="Postal-Code."
-              value={updatedata.Zip}
-              onChange={handleChange}
-            />
-            {errors.Zip && <p className="text-danger">{errors.Zip}</p>}
-          </div>
-          <div className="col-sm-3 form-group">
-            <label htmlFor="Country">Country</label>
-            <select className="form-control custom-select browser-default" name="Country" value={updatedata.Country} onChange={handleCountryChange}>
-              <option value="India">India</option>
-              {/* Add other countries as options */}
-            </select>
-            {errors.Country && <p className="text-danger">{errors.Country}</p>}
-          </div>
-          <div className="col-sm-3 form-group">
-            <label htmlFor="Date">Date Of Birth</label>
-            <input
-              type="date"
-              name="Dob"
-              className="form-control"
-              id="Date"
-              value={updatedata.Dob}
-              onChange={handleChange}
-            />
-            {errors.Dob && <p className="text-danger">{errors.Dob}</p>}
-          </div>
-          <div className="col-sm-3 form-group">
-            <label htmlFor="sex">Gender</label>
-            <select
-              id="sex"
-              className="form-control browser-default custom-select"
-              name="Gender"
-              value={updatedata.Gender}
-              onChange={handleGenderChange}
-            >
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-             
-            </select>
-            {errors.Gender && <p className="text-danger">{errors.Gender}</p>}
-          </div>
-          <div className="col-sm-4 form-group">
-            <label htmlFor="phone">Phone</label>
-            <input
-              type="text"
-              className="form-control"
-              name="Phone"
-              placeholder="Enter your contact no."
-              value={updatedata.Phone}
-              onChange={handleChange}
-            />
-            {errors.Phone && <p className="text-danger">{errors.Phone}</p>}
-          </div>
-          <div className="col-sm-4 form-group">
-            <label htmlFor="Password">Password</label>
-            <div className="input-group">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                className="form-control"
-                name="Password"
-                placeholder="Enter your password."
-                value={updatedata.Password}
-                onChange={handleChange}
-              />
-              <div className="input-group-append">
-                <span className="input-group-text" onClick={togglePasswordVisibility}>
-                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
-                </span>
-              </div>
-            </div>
-            {errors.Password && <p className="text-danger">{errors.Password}</p>}
-          </div>
-          <div className="col-sm-4 form-group">
-            <label htmlFor="ConfirmPassword">Confirm Password</label>
-            <div className="input-group">
-              <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                className="form-control"
-                name="ConfirmPassword"
-                placeholder="Confirm your password."
-                value={updatedata.ConfirmPassword}
-                onChange={handleChange}
-              />
-              <div className="input-group-append">
-                <span className="input-group-text" onClick={toggleConfirmPasswordVisibility}>
-                  <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
-                </span>
-              </div>
-            </div>
-            {errors.ConfirmPassword && <p className="text-danger">{errors.ConfirmPassword}</p>}
-          </div>
-          <div className="col-sm-12 form-group mb-0">
-            <button type="submit" className="btn btn-primary float-right">Submit</button>
-          </div>
+      
+
+      <div className="row jumbotron box8 border border-secondary shadow">
+        <div className="col-sm-12 mx-t3 mb-4">
+          <h2 className=" text-dark">Update Employee</h2>
         </div>
-      </form>
+        <div className="col-sm-4 form-group mb-4">
+          <label htmlFor="name-f">First Name</label>
+          <input
+            type="text"
+            className="form-control"
+            name="Firstname"
+            placeholder="Enter your first name."
+            value={updatedata.Firstname}
+            onChange={handleChange}
+          />
+          {errors.Firstname && <p className="text-danger">{errors.Firstname}</p>}
+        </div>
+        <div className="col-sm-4 form-group mb-4">
+          <label htmlFor="name-l">Last Name</label>
+          <input
+            type="text"
+            className="form-control"
+            name="Lastname"
+            placeholder="Enter your last name."
+            value={updatedata.Lastname}
+            onChange={handleChange}
+          />
+          {errors.Lastname && <p className="text-danger">{errors.Lastname}</p>}
+        </div>
+        <div className="col-sm-4 form-group mb-4">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            className="form-control"
+            name="Email"
+            placeholder="Enter your email."
+            value={updatedata.Email}
+            onChange={handleChange}
+          />
+          {errors.Email && <p className="text-danger">{errors.Email}</p>}
+        </div>
+        <div className="col-sm-4 form-group mb-4">
+          <label htmlFor="address-1">Address Line-1</label>
+          <input
+            type="text"
+            className="form-control"
+            name="Address1"
+            id="address-1"
+            placeholder="Locality/House/Street no."
+            value={updatedata.Address1}
+            onChange={handleChange}
+          />
+          {errors.Address1 && <p className="text-danger">{errors.Address1}</p>}
+        </div>
+        <div className="col-sm-4 form-group mb-4">
+          <label htmlFor="address-2">Address Line-2</label>
+          <input
+            type="text"
+            className="form-control"
+            name="Address2"
+            id="address-2"
+            placeholder="Village/City Name."
+            value={updatedata.Address2}
+            onChange={handleChange}
+          />
+          {errors.Address2 && <p className="text-danger">{errors.Address2}</p>}
+        </div>
+        <div className="col-sm-4 form-group mb-4">
+          <label htmlFor="State">State</label>
+          <input
+            type="text"
+            className="form-control"
+            name="State"
+            id="State"
+            placeholder="Enter your state name."
+            value={updatedata.State}
+            onChange={handleChange}
+          />
+          {errors.State && <p className="text-danger">{errors.State}</p>}
+        </div>
+        <div className="col-sm-3 form-group mb-4">
+          <label htmlFor="zip">Postal-Code</label>
+          <input
+            type="text"
+            className="form-control"
+            name="Zip"
+            id="zip"
+            placeholder="Postal-Code."
+            value={updatedata.Zip}
+            onChange={handleChange}
+          />
+          {errors.Zip && <p className="text-danger">{errors.Zip}</p>}
+        </div>
+        <div className="col-sm-3 form-group mb-4">
+      <label htmlFor="Country">Country</label>
+      <select
+        className="form-control custom-select browser-default"
+        placeholder="Select Country"
+        name="Country"
+        value={updatedata.Country}
+        onChange={handleCountryChange}
+      >
+        <option value="" readonly>Select Country</option>
+        <option value="India">India</option>
+        {/* Add other countries as options */}
+      </select>
+      {errors.Country && <p className="text-danger">{errors.Country}</p>}
+    </div>
+        <div className="col-sm-3 form-group mb-4">
+          <label htmlFor="Date">Date Of Birth</label>
+          <input
+            type="date"
+            name="DateOfBith"
+            className="form-control"
+            id="Date"
+            value={updatedata.DateOfBith}
+            onChange={handleChange}
+          />
+          {errors.DateOfBith && <p className="text-danger">{errors.DateOfBith}</p>}
+        </div>
+       
+          <div className="col-sm-3 form-group mb-4">
+      <label htmlFor="Gender">Gender</label>
+      <select
+        className="form-control custom-select browser-default"
+        placeholder="Select Gender"
+        name="Gender"
+        value={updatedata.Gender}
+        onChange={handleGenderChange}
+      >
+        <option value="" readonly>Select Gender</option>
+        <option value="male">Male</option>
+            <option value="female">Female</option>
+            
+      </select>
+      {errors.Gender && <p className="text-danger">{errors.Gender}</p>}
+    </div> 
+        <div className="col-sm-4 form-group mb-4">
+          <label htmlFor="phone">Phone</label>
+          <input
+            type="text"
+            className="form-control"
+            name="Phone"
+            placeholder="Enter your contact no."
+            value={updatedata.Phone}
+            onChange={handleChange}
+          />
+          {errors.Phone && <p className="text-danger">{errors.Phone}</p>}
+        </div>
+        <div className="col-sm-4 form-group mb-4">
+          <label htmlFor="Password">Password</label>
+          <div className="input-group">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              className="form-control"
+              name="Password"
+              placeholder="Enter your password."
+              value={updatedata.Password}
+              onChange={handleChange}
+            />
+            <div className="input-group-append">
+              <span className="input-group-text" onClick={togglePasswordVisibility}>
+                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+              </span>
+            </div>
+          </div>
+          {errors.Password && <p className="text-danger">{errors.Password}</p>}
+        </div>
+        <div className="col-sm-4 form-group mb-4" >
+          <label htmlFor="ConfirmPassword">Confirm Password</label>
+          <div className="input-group">
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              className="form-control"
+              name="ConfirmPassword"
+              placeholder="Confirm your password."
+              value={updatedata.ConfirmPassword}
+              onChange={handleChange}
+            />
+            <div className="input-group-append">
+              <span className="input-group-text" onClick={toggleConfirmPasswordVisibility}>
+                <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
+              </span>
+            </div>
+          </div>
+          {errors.ConfirmPassword && <p className="text-danger">{errors.ConfirmPassword}</p>}
+        </div>
+        <div className="col-sm-12 form-group mb-0">
+          <button type="submit" className="btn btn-primary float-right">Update</button>
+        </div>
+      </div>
+    </form>
     </div>
   );
 }

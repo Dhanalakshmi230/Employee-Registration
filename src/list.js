@@ -53,7 +53,7 @@ function List({ tableData, setTableData, updateEntry, deleteEntry }) {
 
 
   const handleEdit = (id) => {
-    navigate(`/updateform/${id}`);
+    navigate(`/Employee/Update/${id}`);
   };
 
   const handleSearch = (e) => {

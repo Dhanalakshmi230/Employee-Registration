@@ -25,8 +25,16 @@ export default function Navbar() {
 
       {/* Navigation links */}
       <div className={`links ${menuOpen ? "open" : ""}`}>
-        <NavLink 
+      <NavLink 
           to="/" 
+          exact 
+          activeClassName="active" 
+          onClick={() => setMenuOpen(false)}
+        >
+          <b>Home</b>
+        </NavLink>
+        <NavLink 
+          to="/Employee/Create" 
           exact 
           activeClassName="active" 
           onClick={() => setMenuOpen(false)}
@@ -34,7 +42,7 @@ export default function Navbar() {
           <b>Create Employee</b>
         </NavLink>
         <NavLink 
-          to="/list" 
+          to="/Employee/View" 
           activeClassName="active" 
           onClick={() => setMenuOpen(false)}
         >

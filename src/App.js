@@ -12,10 +12,10 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-      {/* <Route path="/" element={<Home />} /> */}
-        <Route path="/" element={<Form />} />
-        <Route path="/list" element={<List />} />
-        <Route path="/updateform/:id" element={<Updateform />} />
+      <Route path="/" element={<Home />} />
+        <Route path="/Employee/Create" element={<Form />} />
+        <Route path="/Employee/View" element={<List />} />
+        <Route path="/Employee/Update/:id" element={<Updateform />} />
 
       </Routes>
     </Router>

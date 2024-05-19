@@ -19,7 +19,7 @@
 //     State: '',
 //     Zip: '',
 //     Country: 'India',
-//     Dob: '',
+//     DateOfBith: '',
 //     Gender: 'male',
 //     Phone: '',
 //     Password: '',
@@ -34,7 +34,7 @@
 //     State: '',
 //     Zip: '',
 //     Country: '',
-//     Dob: '',
+//     DateOfBith: '',
 //     Gender: '',
 //     Phone: '',
 //     Password: '',
@@ -68,7 +68,7 @@
 
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
-//     const requiredFields = ['Firstname', 'Lastname', 'Email', 'Address1', 'Address2', 'State', 'Zip', 'Country', 'Dob', 'Gender', 'Phone', 'Password', 'ConfirmPassword'];
+//     const requiredFields = ['Firstname', 'Lastname', 'Email', 'Address1', 'Address2', 'State', 'Zip', 'Country', 'DateOfBith', 'Gender', 'Phone', 'Password', 'ConfirmPassword'];
 //     const emptyFieldErrors = {};
 //     requiredFields.forEach((field) => {
 //       if (!formData[field]) {
@@ -200,8 +200,8 @@
 //           </div>
 //           <div className="col-sm-3 form-group">
 //             <label htmlFor="Date">Date Of Birth</label>
-//             <input type="date" name="Dob" className="form-control" id="Date" value={formData.Dob} onChange={handleChange} />
-//             {errors.Dob && <p className="text-danger">{errors.Dob}</p>}
+//             <input type="date" name="DateOfBith" className="form-control" id="Date" value={formData.DateOfBith} onChange={handleChange} />
+//             {errors.DateOfBith && <p className="text-danger">{errors.DateOfBith}</p>}
 //           </div>
           // <div className="col-sm-3 form-group">
           //   <label htmlFor="sex">Gender</label>
@@ -275,9 +275,9 @@ function Form({ submitForm }) {
     Address2: '',
     State: '',
     Zip: '',
-    Country: 'India',
-    Dob: '',
-    Gender: 'male',
+    Country: '',
+    DateOfBith: '',
+    Gender: '',
     Phone: '',
     Password: '',
     ConfirmPassword: ''
@@ -309,24 +309,29 @@ function Form({ submitForm }) {
     setErrors(updatedErrors);
   };
 
-  const handleGenderChange = (event) => {
-    setFormData({
-      ...formData,
-      Gender: event.target.value
-    });
+  const handleGenderChange = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, Gender: value });
+
+    if (value) {
+      setErrors((prevErrors) => ({ ...prevErrors, Gender: '' }));
+    }
   };
 
-  const handleCountryChange = (event) => {
-    setFormData({
-      ...formData,
-      Country: event.target.value
-    });
+  const handleCountryChange = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, Country: value });
+
+    if (value) {
+      setErrors((prevErrors) => ({ ...prevErrors, Country: '' }));
+    }
   };
 
   const handleSubmit = (e) => {
+    const newErrors = {};
     e.preventDefault();
     
-    const requiredFields = ['Firstname', 'Lastname', 'Email', 'Address1', 'Address2', 'State', 'Zip', 'Country', 'Dob', 'Gender', 'Phone', 'Password', 'ConfirmPassword'];
+    const requiredFields = ['Firstname', 'Lastname', 'Email', 'Address1', 'Address2', 'State', 'Zip', 'Country', 'DateOfBith', 'Gender', 'Phone', 'Password', 'ConfirmPassword'];
     const emptyFieldErrors = {};
     
     requiredFields.forEach((field) => {
@@ -344,6 +349,13 @@ function Form({ submitForm }) {
       setErrors({ ...errors, Password: 'Passwords do not match', ConfirmPassword: 'Passwords do not match' });
       return;
     }
+    if (!formData.Gender) {
+      newErrors.Gender = 'Please select a gender.';
+    }
+
+    if (!formData.Country) {
+      newErrors.Country = 'Please select a country.';
+    }
 
     submitForm(formData);
 
@@ -357,7 +369,7 @@ function Form({ submitForm }) {
     .then(response => response.json())
     .then(data => {
       console.log(data);
-      navigate('/list');
+      navigate('/Employee/View');
     })
     .catch(error => {
       console.error('Error:', error);
@@ -375,11 +387,13 @@ function Form({ submitForm }) {
   return (
     <div className="container mt-3 bg-light">
       <form onSubmit={handleSubmit}>
+      
+
         <div className="row jumbotron box8 border border-secondary shadow">
           <div className="col-sm-12 mx-t3 mb-4">
             <h2 className=" text-dark">Create Employee</h2>
           </div>
-          <div className="col-sm-4 form-group">
+          <div className="col-sm-4 form-group mb-4">
             <label htmlFor="name-f">First Name</label>
             <input
               type="text"
@@ -391,7 +405,7 @@ function Form({ submitForm }) {
             />
             {errors.Firstname && <p className="text-danger">{errors.Firstname}</p>}
           </div>
-          <div className="col-sm-4 form-group">
+          <div className="col-sm-4 form-group mb-4">
             <label htmlFor="name-l">Last Name</label>
             <input
               type="text"
@@ -403,7 +417,7 @@ function Form({ submitForm }) {
             />
             {errors.Lastname && <p className="text-danger">{errors.Lastname}</p>}
           </div>
-          <div className="col-sm-4 form-group">
+          <div className="col-sm-4 form-group mb-4">
             <label htmlFor="email">Email</label>
             <input
               type="email"
@@ -415,7 +429,7 @@ function Form({ submitForm }) {
             />
             {errors.Email && <p className="text-danger">{errors.Email}</p>}
           </div>
-          <div className="col-sm-4 form-group">
+          <div className="col-sm-4 form-group mb-4">
             <label htmlFor="address-1">Address Line-1</label>
             <input
               type="text"
@@ -428,7 +442,7 @@ function Form({ submitForm }) {
             />
             {errors.Address1 && <p className="text-danger">{errors.Address1}</p>}
           </div>
-          <div className="col-sm-4 form-group">
+          <div className="col-sm-4 form-group mb-4">
             <label htmlFor="address-2">Address Line-2</label>
             <input
               type="text"
@@ -441,7 +455,7 @@ function Form({ submitForm }) {
             />
             {errors.Address2 && <p className="text-danger">{errors.Address2}</p>}
           </div>
-          <div className="col-sm-4 form-group">
+          <div className="col-sm-4 form-group mb-4">
             <label htmlFor="State">State</label>
             <input
               type="text"
@@ -454,7 +468,7 @@ function Form({ submitForm }) {
             />
             {errors.State && <p className="text-danger">{errors.State}</p>}
           </div>
-          <div className="col-sm-3 form-group">
+          <div className="col-sm-3 form-group mb-4">
             <label htmlFor="zip">Postal-Code</label>
             <input
               type="text"
@@ -467,37 +481,44 @@ function Form({ submitForm }) {
             />
             {errors.Zip && <p className="text-danger">{errors.Zip}</p>}
           </div>
-          <div className="col-sm-3 form-group">
-            <label htmlFor="Country">Country</label>
-            <select className="form-control custom-select browser-default" placeholder="Select Country." name="Country" value={formData.Country} onChange={handleCountryChange}>
-              <option value="India">India</option>
-              {/* Add other countries as options */}
-            </select>
-            {errors.Country && <p className="text-danger">{errors.Country}</p>}
-          </div>
-          <div className="col-sm-3 form-group">
+          <div className="col-sm-3 form-group mb-4">
+        <label htmlFor="Country">Country</label>
+        <select
+          className="form-control custom-select browser-default"
+          placeholder="Select Country"
+          name="Country"
+          value={formData.Country}
+          onChange={handleCountryChange}
+        >
+          <option value="" readonly>Select Country</option>
+          <option value="India">India</option>
+          {/* Add other countries as options */}
+        </select>
+        {errors.Country && <p className="text-danger">{errors.Country}</p>}
+      </div>
+          <div className="col-sm-3 form-group mb-4">
             <label htmlFor="Date">Date Of Birth</label>
             <input
               type="date"
-              name="Dob"
+              name="DateOfBith"
               className="form-control"
               id="Date"
-              value={formData.Dob}
+              value={formData.DateOfBith}
               onChange={handleChange}
             />
-            {errors.Dob && <p className="text-danger">{errors.Dob}</p>}
+            {errors.DateOfBith && <p className="text-danger">{errors.DateOfBith}</p>}
           </div>
-          <div className="col-sm-3 form-group">
+          <div className="col-sm-3 form-group mb-4">
             <label htmlFor="sex">Gender</label>
             <select id="sex" placeholder="Select Gender" className="form-control browser-default custom-select" name="Gender" value={formData.Gender} onChange={handleGenderChange}>
-            <option value="select">Select the value</option>
+            <option value="">Select the value</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="unspecified">Unspecified</option>
             </select>
             {errors.Gender && <p className="text-danger">{errors.Gender}</p>}
           </div>
-          <div className="col-sm-4 form-group">
+          <div className="col-sm-4 form-group mb-4">
             <label htmlFor="phone">Phone</label>
             <input
               type="text"
@@ -509,7 +530,7 @@ function Form({ submitForm }) {
             />
             {errors.Phone && <p className="text-danger">{errors.Phone}</p>}
           </div>
-          <div className="col-sm-4 form-group">
+          <div className="col-sm-4 form-group mb-4">
             <label htmlFor="Password">Password</label>
             <div className="input-group">
               <input
@@ -528,7 +549,7 @@ function Form({ submitForm }) {
             </div>
             {errors.Password && <p className="text-danger">{errors.Password}</p>}
           </div>
-          <div className="col-sm-4 form-group">
+          <div className="col-sm-4 form-group mb-4" >
             <label htmlFor="ConfirmPassword">Confirm Password</label>
             <div className="input-group">
               <input

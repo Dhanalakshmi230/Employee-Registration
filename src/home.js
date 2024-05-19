@@ -4,11 +4,9 @@ import './home.css'; // Import CSS file for styling
 
 const Home = () => {
   return (
-    <div className='background-container'>
-      {/* Use background image as a CSS property */}
-      {/* <div className='image'></div> */}
-    
-    </div>
+    <div className="background-container">
+    <h3 className="welcome-text">Welcome</h3>
+</div>
   );
 };
 
