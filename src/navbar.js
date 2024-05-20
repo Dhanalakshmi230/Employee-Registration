@@ -25,14 +25,6 @@ export default function Navbar() {
 
       {/* Navigation links */}
       <div className={`links ${menuOpen ? "open" : ""}`}>
-      <NavLink 
-          to="/" 
-          exact 
-          activeClassName="active" 
-          onClick={() => setMenuOpen(false)}
-        >
-          <b>Home</b>
-        </NavLink>
         <NavLink 
           to="/Employee/Create" 
           exact 

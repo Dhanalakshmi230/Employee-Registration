@@ -25,7 +25,7 @@ function Updateform({ updateEntry }) {
       Lastname: /^[A-Za-z]+$/,
       Email: /^[\w-.]+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/,
       Phone: /^\d{10}$/,
-      Zip: /^\d+$/
+      Zip: /^\d{6}(-\d{4})?$/  
     };
 
     if (regexPatterns[name] && !regexPatterns[name].test(value)) {
@@ -33,7 +33,15 @@ function Updateform({ updateEntry }) {
     } else {
       delete updatedErrors[name];
     }
-
+    if (name === 'Phone') {
+      if (!/^\d*$/.test(value)) {
+        return; // Prevent updating state if the value contains non-numeric characters
+      }
+    }
+    if (name === 'Zip' && !/^[\d-]*$/.test(value)) {
+      // Allows only numbers and hyphen for Zip, but doesn't check complete pattern yet
+      return;
+    }
     setUpdatedata({
       ...updatedata,
       [name]: value,
@@ -114,6 +122,12 @@ function Updateform({ updateEntry }) {
         emptyFieldErrors[field] = `${field} is required`;
       }
     });
+    if (/\d/.test(updatedata.Firstname)) {
+      newErrors.Firstname = 'Firstname should not contain numbers';
+    }
+    if (/\d/.test(updatedata.Lastname)) {
+      newErrors.Lastname = 'Lastname should not contain numbers';
+    }
     
     if (Object.keys(emptyFieldErrors).length > 0) {
       setErrors(emptyFieldErrors);
@@ -134,7 +148,8 @@ function Updateform({ updateEntry }) {
     updateEntry(updatedata);
         e.preventDefault();
 
-        updateEntry(updatedata);
+    updateEntry(updatedata);
+    resetForm();
 
         const updatedFormData = { ...updatedata };
 
@@ -164,7 +179,24 @@ function Updateform({ updateEntry }) {
       );
     }
     
-    
+    const resetForm = () => {
+      setUpdatedata({
+        Firstname: '',
+        Lastname: '',
+        Email: '',
+        Address1: '',
+        Address2: '',
+        State: '',
+        Zip: '',
+        Country: '',
+        DateOfBirth: '',
+        Gender: '',
+        Phone: '',
+        Password: '',
+        ConfirmPassword: ''
+      });
+      setErrors({});
+    };
   return (
     <div className="container mt-3 bg-light">
       <form onSubmit={handleSubmit}>
@@ -217,7 +249,7 @@ function Updateform({ updateEntry }) {
             className="form-control"
             name="Address1"
             id="address-1"
-            placeholder="Locality/House/Street no."
+            placeholder="House no/Street/Locality."
             value={updatedata.Address1}
             onChange={handleChange}
           />
@@ -357,8 +389,9 @@ function Updateform({ updateEntry }) {
           {errors.ConfirmPassword && <p className="text-danger">{errors.ConfirmPassword}</p>}
         </div>
         <div className="col-sm-12 form-group mb-0">
-          <button type="submit" className="btn btn-primary float-right">Update</button>
-        </div>
+            <button type="submit" className="btn btn-primary float-right mr-2">Update</button>
+            <button type="button" onClick={resetForm} className="btn btn-secondary float-right mr-2">Reset</button>
+          </div>
       </div>
     </form>
     </div>

@@ -53,3 +53,9 @@ input{
   font-size: 12px; /* Adjust the size as needed */
   color: #2a2828; /* Optional: Adjust the color if needed */
 }
+
+/* form.css */
+.input-error {
+  border-color: red !important;
+}
+
